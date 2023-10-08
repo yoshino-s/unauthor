@@ -63,6 +63,7 @@ func (s *Scanner) Run() {
 		p.Go(func(c context.Context) (ScanFuncResult, error) {
 			t := time.Now()
 			res, err := s.scanFunc(c, target)
+			res.Target = target
 			res.Time = time.Since(t)
 			if err != nil {
 				res.Error = err

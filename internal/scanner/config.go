@@ -12,9 +12,9 @@ type ScannerConfig struct {
 }
 
 type ScanFuncResult struct {
-	Target  string
-	Success bool
-	Result  interface{}
-	Error   error
+	Target  string        `json:"target"`
+	Success bool          `json:"success"`
+	Result  interface{}   `json:"result"`
+	Error   error         `json:"error"`
 	Time    time.Duration `json:"time"`
 }

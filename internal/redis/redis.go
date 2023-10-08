@@ -29,7 +29,6 @@ const payload = "*1\r\n$4\r\ninfo\r\n"
 
 func Redis(ctx context.Context, target string) (res scanner.ScanFuncResult, err error) {
 	res.Success = false
-	res.Target = target
 
 	var addr string
 
