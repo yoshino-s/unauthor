@@ -12,7 +12,6 @@ var (
 		Long: "Scan redis unauthorized access",
 		Run: func(cmd *cobra.Command, args []string) {
 			scanner := scanner.NewScanner(config, redis.Redis)
-
 			scanner.Run()
 		},
 	}

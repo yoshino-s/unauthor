@@ -25,10 +25,7 @@ func NewScanner(config ScannerConfig, scanFunc ScanFunc) *Scanner {
 }
 
 func (s *Scanner) Run() {
-	ctx, cancel := context.WithTimeout(context.Background(), s.config.Timeout)
-	p := pool.NewWithResults[ScanFuncResult]().WithContext(ctx).WithMaxGoroutines(s.config.Concurrent)
-
-	defer cancel()
+	p := pool.NewWithResults[ScanFuncResult]().WithMaxGoroutines(s.config.Concurrent)
 
 	targets := make(chan string)
 
@@ -60,23 +57,24 @@ func (s *Scanner) Run() {
 	}()
 
 	for target := range targets {
-		p.Go(func(c context.Context) (ScanFuncResult, error) {
+		p.Go(func() ScanFuncResult {
 			t := time.Now()
-			res, err := s.scanFunc(c, target)
+			ctx, cancel := context.WithTimeout(
+				context.Background(),
+				s.config.Timeout,
+			)
+			defer cancel()
+			res, err := s.scanFunc(ctx, target)
 			res.Target = target
 			res.Time = time.Since(t)
 			if err != nil {
 				res.Error = err
 			}
-			return res, nil
+			return res
 		})
 	}
 
-	res, err := p.Wait()
-
-	if err != nil {
-		panic(err)
-	}
+	res := p.Wait()
 
 	if res == nil {
 		res = []ScanFuncResult{}
