@@ -13,18 +13,6 @@ import (
 
 var _ scanner.ScanFunc = Redis
 
-// s = socket.socket()
-// socket.setdefaulttimeout(3)  # 设置超时时间
-// try:
-// 	s.connect((host, port))
-// 	s.send(payload)  # 发送info命令
-// 	response = s.recv(1024).decode()
-// 	s.close()
-// 	if response and 'redis_version' in data:
-// 		return True,'%s:%s'%(host,port)
-// except (socket.error, socket.timeout):
-// 	pass
-
 const payload = "*1\r\n$4\r\ninfo\r\n"
 
 func Redis(ctx context.Context, target string) (res scanner.ScanFuncResult, err error) {

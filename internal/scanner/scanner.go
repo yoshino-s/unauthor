@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/sourcegraph/conc/iter"
@@ -25,7 +26,7 @@ func NewScanner(config ScannerConfig, scanFunc ScanFunc) *Scanner {
 }
 
 func (s *Scanner) Run() {
-	p := pool.NewWithResults[ScanFuncResult]().WithMaxGoroutines(s.config.Concurrent)
+	p := pool.New().WithMaxGoroutines(s.config.Concurrent)
 
 	targets := make(chan string)
 
@@ -56,34 +57,33 @@ func (s *Scanner) Run() {
 		close(targets)
 	}()
 
+	outputLock := sync.Mutex{}
+
 	for target := range targets {
-		p.Go(func() ScanFuncResult {
-			t := time.Now()
-			ctx, cancel := context.WithTimeout(
-				context.Background(),
-				s.config.Timeout,
-			)
-			defer cancel()
-			res, err := s.scanFunc(ctx, target)
-			res.Target = target
-			res.Time = time.Since(t)
-			if err != nil {
-				res.Error = err
-			}
-			return res
-		})
+		func(target string) {
+			p.Go(func() {
+				t := time.Now()
+				ctx, cancel := context.WithTimeout(
+					context.Background(),
+					s.config.Timeout,
+				)
+				defer cancel()
+				res, err := s.scanFunc(ctx, target)
+				res.Target = target
+				res.Time = time.Since(t)
+				if err != nil {
+					res.Error = err
+				}
+
+				outputLock.Lock()
+				defer outputLock.Unlock()
+
+				if err := json.NewEncoder(os.Stdout).Encode(res); err != nil {
+					panic(err)
+				}
+			})
+		}(target)
 	}
 
-	res := p.Wait()
-
-	if res == nil {
-		res = []ScanFuncResult{}
-	}
-
-	r, err := json.Marshal(res)
-	if err != nil {
-		panic(err)
-	}
-
-	os.Stdout.Write(r)
+	p.Wait()
 }
