@@ -28,8 +28,8 @@ var (
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&scanType, "type", "", "scan type")
-	rootCmd.PersistentFlags().StringArrayVarP(&config.Targets, "targets", "t", []string{}, "target files or directories")
-	rootCmd.PersistentFlags().StringArrayVarP(&config.TargetsFile, "targets-file", "f", []string{}, "target files or directories")
+	rootCmd.PersistentFlags().StringSliceVarP(&config.Targets, "targets", "t", []string{}, "target files or directories")
+	rootCmd.PersistentFlags().StringSliceVarP(&config.TargetsFile, "targets-file", "f", []string{}, "target files or directories")
 	rootCmd.PersistentFlags().DurationVarP(&config.Timeout, "timeout", "T", time.Second*10, "timeout seconds")
 	rootCmd.PersistentFlags().IntVarP(&config.Concurrent, "concurrent", "c", 20, "concurrent number")
 }
