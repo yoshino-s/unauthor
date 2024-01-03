@@ -1,0 +1,19 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Package",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/unauthor.go",
+            "args": [
+                "--type", "redis",
+                "-t", "rtc.bjjinxixin.com:6380,www.know-can.com:6380,www.sungesoft.com:6380,jz-brand-api-pro.cgbacyts.com:6380,qingning6.com:6380,hnhxpsj.com:6380,m.hnhxpsj.com:6380,www.hnhxpsj.com:6380,chezheng.starmonkey.cn:6380,hgapi.chongxiaopai.com:6380,cqrongtu.com:6380,www.cqrongtu.com:6380,m.7jing.com:6380,talent.shandongjnsjbw.com:8899,ofjti001.w.soso5.com:6380,v9.yikuaida.cn:6380,kyc.kelunit.com:6380,api.chatanytime.cn:6379,www.aptbiotech.com:6379,wxapp.gjpwl.com:6379,www.daoyaa.com:6379,aki.daoyaa.com:6379,mdaren.cn:6379,www.mdaren.cn:6379,manage.idoutec.cn:7005,admin.xyyduoduo.com:6379,api.milicode.cn:6379,manage.jxtaichi.com:6379,www.gmic.cn:6379,cn-b9.hichina.com:6379,dzzs.sjzz.org.cn:6379,p024.hichina.com:6379,www.fzgaxsh.com:6379,fzgaxsh.com:6379,tsmao.yuanyoumao.com:30000,pilot.wx.oms.smartpevc.com:6379,api.twinklekidscafe.com:6379,yshy.jszwzn.com:6379,crm-cdz.simcotech.net:6379,www.wpsx.com.cn:6379,repository.docker.cqbitmap.com:8094,cloud.czdgcloud.cn:6379,ar.xmrzyx.com:6379,phone.realtimes.com.cn:6666,www.realtimes.com.cn:6666,phonetest.realtimes.com.cn:6666,whdemo.wanghecn.com:6379,zztlyw.com:6379,cn-09.hichina.com:6379,cn-5f.hichina.com:6379,cn-16.hichina.com:6379,cn-22.hichina.com:6379,cn-a7.hichina.com:6379,p027.hichina.com:6379,xgm.scshpc.com:8888,wx.scziya.com:6379,cw-24.hichina.com:6379,vhf.loocms.com:6379,www.newstartsoft.com:6379,merchant.dcrayssh.cn:6379,cl-ele.com:6379,www.cl-ele.com:6379,test.sccpapi.ah-esage.cn:6379,kuaizongjian.com:6379,www.jtzzd.cn:6379,minghealthcare.com:6379,didi.seowhy.com:6379"
+            ]
+        }
+    ]
+}

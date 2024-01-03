@@ -68,6 +68,7 @@ func (s *Scanner) Run() {
 					s.config.Timeout,
 				)
 				defer cancel()
+
 				res, err := s.scanFunc(ctx, target)
 				res.Target = target
 				res.Time = time.Since(t)

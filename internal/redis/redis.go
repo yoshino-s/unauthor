@@ -6,6 +6,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/yoshino-s/unauthor/internal/scanner"
 	"github.com/yoshino-s/unauthor/internal/utils"
@@ -28,16 +29,19 @@ func Redis(ctx context.Context, target string) (res scanner.ScanFuncResult, err 
 	}
 
 	var conn net.Conn
+	d, ok := ctx.Deadline()
 
-	conn, err = net.Dial("tcp", addr)
+	if ok {
+		conn, err = net.DialTimeout("tcp", addr, time.Until(d))
+	} else {
+		conn, err = net.Dial("tcp", addr)
+	}
 
 	if err != nil {
 		return
 	}
 
 	defer conn.Close()
-
-	d, ok := ctx.Deadline()
 
 	if ok {
 		conn.SetDeadline(d)
