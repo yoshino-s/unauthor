@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/yoshino-s/unauthor/internal/redis"
 	"github.com/yoshino-s/unauthor/internal/scanner"
+	"github.com/yoshino-s/unauthor/internal/zookeeper"
 )
 
 var (
@@ -16,6 +17,8 @@ var (
 			switch scanType {
 			case "redis":
 				s = scanner.NewScanner(config, redis.Redis)
+			case "zookeeper":
+				s = scanner.NewScanner(config, zookeeper.Zookeeper)
 			default:
 				cobra.CheckErr("unknown scan type")
 			}
