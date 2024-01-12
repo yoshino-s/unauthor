@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/yoshino-s/unauthor/internal/memcached"
 	"github.com/yoshino-s/unauthor/internal/redis"
 	"github.com/yoshino-s/unauthor/internal/scanner"
 	"github.com/yoshino-s/unauthor/internal/zookeeper"
@@ -19,6 +20,8 @@ var (
 				s = scanner.NewScanner(config, redis.Redis)
 			case "zookeeper":
 				s = scanner.NewScanner(config, zookeeper.Zookeeper)
+			case "memcached":
+				s = scanner.NewScanner(config, memcached.Memcached)
 			default:
 				cobra.CheckErr("unknown scan type")
 			}
