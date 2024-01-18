@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yoshino-s/unauthor/internal/dubbo"
+	"github.com/yoshino-s/unauthor/internal/jdwp"
 	"github.com/yoshino-s/unauthor/internal/memcached"
 	"github.com/yoshino-s/unauthor/internal/redis"
 	"github.com/yoshino-s/unauthor/internal/scanner"
@@ -26,7 +27,7 @@ var (
 			case "dubbo":
 				s = scanner.NewScanner(config, dubbo.Dubbo)
 			case "jdwp":
-				s = scanner.NewScanner(config, dubbo.Dubbo)
+				s = scanner.NewScanner(config, jdwp.Jdwp)
 			default:
 				cobra.CheckErr("unknown scan type")
 			}
