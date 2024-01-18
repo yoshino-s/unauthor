@@ -25,6 +25,8 @@ var (
 				s = scanner.NewScanner(config, memcached.Memcached)
 			case "dubbo":
 				s = scanner.NewScanner(config, dubbo.Dubbo)
+			case "jdwp":
+				s = scanner.NewScanner(config, dubbo.Dubbo)
 			default:
 				cobra.CheckErr("unknown scan type")
 			}
@@ -36,7 +38,7 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&scanType, "type", "", "scan type")
+	rootCmd.PersistentFlags().StringVar(&scanType, "type", "", "scan type, one of redis, zookeeper, memcached, dubbo, jdwp")
 	rootCmd.PersistentFlags().StringSliceVarP(&config.Targets, "targets", "t", []string{}, "target files or directories")
 	rootCmd.PersistentFlags().StringSliceVarP(&config.TargetsFile, "targets-file", "f", []string{}, "target files or directories")
 	rootCmd.PersistentFlags().DurationVarP(&config.Timeout, "timeout", "T", time.Second*10, "timeout seconds")
