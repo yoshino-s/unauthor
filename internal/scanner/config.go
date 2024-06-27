@@ -15,6 +15,6 @@ type ScanFuncResult struct {
 	Target  string        `json:"target"`
 	Success bool          `json:"success"`
 	Result  interface{}   `json:"result"`
-	Error   error         `json:"error"`
+	Error   string        `json:"error"`
 	Time    time.Duration `json:"time"`
 }

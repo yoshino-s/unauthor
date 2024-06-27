@@ -2,20 +2,17 @@ package utils
 
 import (
 	"net/url"
-	"strings"
+	"strconv"
 )
 
-func ExtractAddr(target string) (addr string, err error) {
-	if strings.Contains(target, "//") {
-		var url *url.URL
-		url, err = url.Parse(target)
-		if err != nil {
-			return
-		}
-		addr = url.Host
-		return
-	} else {
-		addr = target
+func ExtractAddr(target string, defaultPort int) (addr string, err error) {
+	url, err := url.Parse(target)
+	if err != nil {
 		return
 	}
+	if url.Port() == "" {
+		url.Host = url.Host + ":" + strconv.Itoa(defaultPort)
+	}
+	addr = url.Host
+	return
 }

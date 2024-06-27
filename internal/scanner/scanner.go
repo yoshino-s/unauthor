@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"os"
@@ -40,17 +41,12 @@ func (s *Scanner) Run() {
 			if err != nil {
 				panic(err)
 			}
+			scanner := bufio.NewScanner(f)
 
 			defer f.Close()
 
-			buf := make([]byte, 1024)
-			for {
-				n, err := f.Read(buf)
-				if err != nil {
-					break
-				}
-
-				targets <- string(buf[:n])
+			for scanner.Scan() {
+				targets <- scanner.Text()
 			}
 		})
 
@@ -73,7 +69,7 @@ func (s *Scanner) Run() {
 				res.Target = target
 				res.Time = time.Since(t)
 				if err != nil {
-					res.Error = err
+					res.Error = err.Error()
 				}
 
 				outputLock.Lock()

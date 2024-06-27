@@ -17,10 +17,10 @@ func Ftp(ctx context.Context, target string) (res scanner.ScanFuncResult, err er
 
 	var addr string
 
-	addr, err = utils.ExtractAddr(target)
+	addr, err = utils.ExtractAddr(target, 21)
 
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return
 	}
 
@@ -33,7 +33,7 @@ func Ftp(ctx context.Context, target string) (res scanner.ScanFuncResult, err er
 	}
 	c, err := ftp.Dial(addr, opts...)
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return
 	}
 
@@ -45,13 +45,13 @@ func Ftp(ctx context.Context, target string) (res scanner.ScanFuncResult, err er
 
 	err = c.Login("anonymous", "anonymous")
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return
 	}
 
 	entries, err := c.List("/")
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return
 	}
 

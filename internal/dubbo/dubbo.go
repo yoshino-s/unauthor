@@ -20,10 +20,10 @@ func Dubbo(ctx context.Context, target string) (res scanner.ScanFuncResult, err 
 
 	var addr string
 
-	addr, err = utils.ExtractAddr(target)
+	addr, err = utils.ExtractAddr(target, 20880)
 
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return
 	}
 

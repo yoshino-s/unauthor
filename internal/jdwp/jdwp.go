@@ -16,10 +16,10 @@ func Jdwp(ctx context.Context, target string) (res scanner.ScanFuncResult, err e
 
 	var addr string
 
-	addr, err = utils.ExtractAddr(target)
+	addr, err = utils.ExtractAddr(target, 8000)
 
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return
 	}
 
@@ -45,14 +45,14 @@ func Jdwp(ctx context.Context, target string) (res scanner.ScanFuncResult, err e
 	jdwpConn := NewJdwpConn(conn)
 
 	if err = jdwpConn.Handshake(); err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return
 	}
 
 	var version *JdwpVersionResponse
 	version, err = jdwpConn.Version()
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		return
 	}
 
