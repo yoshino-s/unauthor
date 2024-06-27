@@ -3,16 +3,22 @@ package utils
 import (
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 func ExtractAddr(target string, defaultPort int) (addr string, err error) {
-	url, err := url.Parse(target)
+	var u *url.URL
+	if strings.Contains(target, "://") {
+		u, err = url.Parse(target)
+	} else {
+		u, err = url.Parse("tcp://" + target)
+	}
 	if err != nil {
 		return
 	}
-	if url.Port() == "" {
-		url.Host = url.Host + ":" + strconv.Itoa(defaultPort)
+	if u.Port() == "" {
+		u.Host = u.Host + ":" + strconv.Itoa(defaultPort)
 	}
-	addr = url.Host
+	addr = u.Host
 	return
 }
