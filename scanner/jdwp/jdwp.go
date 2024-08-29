@@ -2,6 +2,7 @@ package jdwp
 
 import (
 	"context"
+	"encoding/json"
 	"net"
 	"time"
 
@@ -56,8 +57,15 @@ func Jdwp(ctx context.Context, target string) (res types.ScanFuncResult, err err
 		return
 	}
 
+	versionStr, err := json.Marshal(version)
+	if err != nil {
+		res.Error = err.Error()
+		return
+	}
+
 	res.Success = true
-	res.Result = version
+
+	res.Result = string(versionStr)
 
 	return
 }

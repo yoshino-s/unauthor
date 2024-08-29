@@ -3,6 +3,7 @@ package ftp
 import (
 	"context"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/jlaffaye/ftp"
@@ -59,7 +60,7 @@ func Ftp(ctx context.Context, target string) (res types.ScanFuncResult, err erro
 	for _, entry := range entries {
 		files = append(files, entry.Name)
 	}
-	res.Result = files
+	res.Result = strings.Join(files, "\n")
 	res.Success = true
 
 	return

@@ -8,7 +8,7 @@ import (
 type ScanFuncResult struct {
 	Target  string        `json:"target"`
 	Success bool          `json:"success"`
-	Result  interface{}   `json:"result"`
+	Result  string        `json:"result"`
 	Error   string        `json:"error"`
 	Time    time.Duration `json:"time"`
 }
