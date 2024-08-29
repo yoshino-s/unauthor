@@ -8,15 +8,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/yoshino-s/unauthor/internal/scanner"
-	"github.com/yoshino-s/unauthor/internal/utils"
+	"github.com/yoshino-s/unauthor/scanner/types"
+	"github.com/yoshino-s/unauthor/utils"
 )
 
-var _ scanner.ScanFunc = Redis
+var _ types.ScanFunc = Redis
 
 const payload = "*1\r\n$4\r\ninfo\r\n"
 
-func Redis(ctx context.Context, target string) (res scanner.ScanFuncResult, err error) {
+func Redis(ctx context.Context, target string) (res types.ScanFuncResult, err error) {
 	res.Success = false
 
 	var addr string

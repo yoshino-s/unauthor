@@ -27,7 +27,7 @@ builds:
     main: unauthor.go
 
     ldflags:
-      - -s -w -X github.com/yoshino-s/unauthor/pkg/buildinfo.Version={{.Version}} -X github.com/yoshino-s/unauthor/pkg/buildinfo.GitCommit={{.Commit}} -X github.com/yoshino-s/unauthor/pkg/buildinfo.BuildTime={{.Date}}
+      - -s -w -X github.com/yoshino-s/go-framework/common.Version={{.Version}}
 
 archives:
   - format: zip

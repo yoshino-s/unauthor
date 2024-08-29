@@ -1,49 +1,44 @@
 package cmd
 
 import (
-	"time"
+	"context"
 
 	"github.com/spf13/cobra"
-	"github.com/yoshino-s/unauthor/internal/dubbo"
-	"github.com/yoshino-s/unauthor/internal/jdwp"
-	"github.com/yoshino-s/unauthor/internal/memcached"
-	"github.com/yoshino-s/unauthor/internal/redis"
-	"github.com/yoshino-s/unauthor/internal/scanner"
-	"github.com/yoshino-s/unauthor/internal/zookeeper"
+	"github.com/yoshino-s/go-framework/application"
+	"github.com/yoshino-s/go-framework/cmd"
+	"github.com/yoshino-s/go-framework/configuration"
+	"github.com/yoshino-s/go-framework/telemetry"
+	"github.com/yoshino-s/unauthor/scanner"
 )
 
+var name = "soar-helper"
+var app = application.NewMainApplication()
+
 var (
-	rootCmd = &cobra.Command{
-		Use: "unauthor",
+	telemetryApp = telemetry.New()
+	scannerApp   = scanner.New()
+	rootCmd      = &cobra.Command{
+		Use: name,
 		Run: func(cmd *cobra.Command, args []string) {
-			var s *scanner.Scanner
-			switch scanType {
-			case "redis":
-				s = scanner.NewScanner(config, redis.Redis)
-			case "zookeeper":
-				s = scanner.NewScanner(config, zookeeper.Zookeeper)
-			case "memcached":
-				s = scanner.NewScanner(config, memcached.Memcached)
-			case "dubbo":
-				s = scanner.NewScanner(config, dubbo.Dubbo)
-			case "jdwp":
-				s = scanner.NewScanner(config, jdwp.Jdwp)
-			default:
-				cobra.CheckErr("unknown scan type")
-			}
-			s.Run()
+			app.Append(scannerApp)
+			app.Go(context.Background())
 		},
 	}
-	config   scanner.ScannerConfig
-	scanType string
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&scanType, "type", "", "scan type, one of redis, zookeeper, memcached, dubbo, jdwp")
-	rootCmd.PersistentFlags().StringSliceVarP(&config.Targets, "targets", "t", []string{}, "target files or directories")
-	rootCmd.PersistentFlags().StringSliceVarP(&config.TargetsFile, "targets-file", "f", []string{}, "target files or directories")
-	rootCmd.PersistentFlags().DurationVarP(&config.Timeout, "timeout", "T", time.Second*10, "timeout seconds")
-	rootCmd.PersistentFlags().IntVarP(&config.Concurrent, "concurrent", "c", 20, "concurrent number")
+	cobra.OnInitialize(func() {
+		configuration.Setup(name)
+
+		app.Append(telemetryApp)
+	})
+
+	configuration.GenerateConfiguration.Register(rootCmd.PersistentFlags())
+	app.Configuration().Register(rootCmd.PersistentFlags())
+	telemetryApp.Configuration().Register(rootCmd.PersistentFlags())
+	scannerApp.Configuration().Register(rootCmd.PersistentFlags())
+
+	rootCmd.AddCommand(cmd.VersionCmd)
 }
 
 // Execute executes the root command.

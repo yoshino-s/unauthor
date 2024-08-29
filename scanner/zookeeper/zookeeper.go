@@ -6,15 +6,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/yoshino-s/unauthor/internal/scanner"
-	"github.com/yoshino-s/unauthor/internal/utils"
+	"github.com/yoshino-s/unauthor/scanner/types"
+	"github.com/yoshino-s/unauthor/utils"
 )
 
-var _ scanner.ScanFunc = Zookeeper
+var _ types.ScanFunc = Zookeeper
 
 const payload = "envi"
 
-func Zookeeper(ctx context.Context, target string) (res scanner.ScanFuncResult, err error) {
+func Zookeeper(ctx context.Context, target string) (res types.ScanFuncResult, err error) {
 	res.Success = false
 
 	var addr string

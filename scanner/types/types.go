@@ -1,15 +1,9 @@
-package scanner
+package types
 
 import (
+	"context"
 	"time"
 )
-
-type ScannerConfig struct {
-	Targets     []string
-	TargetsFile []string
-	Timeout     time.Duration
-	Concurrent  int
-}
 
 type ScanFuncResult struct {
 	Target  string        `json:"target"`
@@ -18,3 +12,5 @@ type ScanFuncResult struct {
 	Error   string        `json:"error"`
 	Time    time.Duration `json:"time"`
 }
+
+type ScanFunc func(context.Context, string) (ScanFuncResult, error)
