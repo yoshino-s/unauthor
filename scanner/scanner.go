@@ -22,9 +22,25 @@ import (
 	"go.uber.org/zap"
 )
 
+type OutputFunc func(res types.ScanFuncResult)
+
+func DefaultOutputFunc() OutputFunc {
+	outputLock := sync.Mutex{}
+
+	return func(res types.ScanFuncResult) {
+		outputLock.Lock()
+		defer outputLock.Unlock()
+
+		if err := json.NewEncoder(os.Stdout).Encode(res); err != nil {
+			panic(err)
+		}
+	}
+}
+
 type Scanner struct {
 	*application.EmptyApplication
-	config ScannerConfig
+	config     ScannerConfig
+	OutputFunc OutputFunc
 }
 
 func New() *Scanner {
@@ -41,6 +57,8 @@ func New() *Scanner {
 	s.Register("ftp", ftp.Ftp)
 	s.Register("dubbo", dubbo.Dubbo)
 	s.Register("jdwp", jdwp.Jdwp)
+
+	s.OutputFunc = DefaultOutputFunc()
 
 	return s
 }
@@ -85,8 +103,6 @@ func (s *Scanner) Run(ctx context.Context) {
 		close(targets)
 	}()
 
-	outputLock := sync.Mutex{}
-
 	for target := range targets {
 		func(target string) {
 			p.Go(func() {
@@ -104,12 +120,7 @@ func (s *Scanner) Run(ctx context.Context) {
 					res.Error = err.Error()
 				}
 
-				outputLock.Lock()
-				defer outputLock.Unlock()
-
-				if err := json.NewEncoder(os.Stdout).Encode(res); err != nil {
-					panic(err)
-				}
+				s.OutputFunc(res)
 			})
 		}(target)
 	}
