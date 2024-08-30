@@ -76,7 +76,8 @@ func (s *Scanner) Run(ctx context.Context) {
 
 	scanFunc := s.config.scanFuncs[s.config.Protocol]
 	if scanFunc == nil {
-		s.Logger.Fatal("unknown protocol", zap.String("protocol", s.config.Protocol))
+		s.Logger.Error("unknown protocol", zap.String("protocol", s.config.Protocol))
+		return
 	}
 
 	targets := make(chan string)
