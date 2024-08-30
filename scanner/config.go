@@ -20,7 +20,7 @@ type ScannerConfig struct {
 	Timeout     time.Duration
 	Concurrent  int
 	Protocol    string
-	scanFuncs   map[string]types.ScanFunc
+	ScanFuncs   map[string]types.ScanFunc
 }
 
 func (c *ScannerConfig) Register(set *pflag.FlagSet) {
@@ -28,7 +28,7 @@ func (c *ScannerConfig) Register(set *pflag.FlagSet) {
 	set.StringSliceVarP(&c.TargetsFile, "scanner.targets-file", "f", nil, "targets file")
 	set.DurationVarP(&c.Timeout, "scanner.timeout", "T", 5*time.Second, "timeout")
 	set.IntVarP(&c.Concurrent, "scanner.concurrent", "c", 100, "concurrent")
-	set.StringVarP(&c.Protocol, "scanner.protocol", "p", "", fmt.Sprintf("protocol, one of %s", strings.Join(common.MapKeys(c.scanFuncs), ", ")))
+	set.StringVarP(&c.Protocol, "scanner.protocol", "p", "", fmt.Sprintf("protocol, one of %s", strings.Join(common.MapKeys(c.ScanFuncs), ", ")))
 
 	common.MustNoError(viper.BindPFlags(set))
 	configuration.Register(c)

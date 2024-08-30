@@ -47,7 +47,7 @@ func New() *Scanner {
 	s := &Scanner{
 		EmptyApplication: application.NewEmptyApplication(),
 		config: ScannerConfig{
-			scanFuncs: make(map[string]types.ScanFunc),
+			ScanFuncs: make(map[string]types.ScanFunc),
 		},
 	}
 
@@ -64,7 +64,7 @@ func New() *Scanner {
 }
 
 func (s *Scanner) Register(name string, fun types.ScanFunc) {
-	s.config.scanFuncs[name] = fun
+	s.config.ScanFuncs[name] = fun
 }
 
 func (s *Scanner) Configuration() configuration.Configuration {
@@ -74,10 +74,9 @@ func (s *Scanner) Configuration() configuration.Configuration {
 func (s *Scanner) Run(ctx context.Context) {
 	p := pool.New().WithMaxGoroutines(s.config.Concurrent)
 
-	scanFunc := s.config.scanFuncs[s.config.Protocol]
+	scanFunc := s.config.ScanFuncs[s.config.Protocol]
 	if scanFunc == nil {
-		s.Logger.Error("unknown protocol", zap.String("protocol", s.config.Protocol))
-		return
+		s.Logger.Fatal("unknown protocol", zap.String("protocol", s.config.Protocol))
 	}
 
 	targets := make(chan string)
