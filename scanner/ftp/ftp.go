@@ -2,7 +2,7 @@ package ftp
 
 import (
 	"context"
-	"net"
+	"fmt"
 	"strings"
 	"time"
 
@@ -16,33 +16,26 @@ var _ types.ScanFunc = Ftp
 func Ftp(ctx context.Context, target string) (res types.ScanFuncResult, err error) {
 	res.Success = false
 
-	var addr string
-
-	addr, err = utils.ExtractAddr(target, 21)
+	addr, err := utils.ExtractAddr(target, 21)
 
 	if err != nil {
 		res.Error = err.Error()
 		return
 	}
 
-	var conn net.Conn
 	d, ok := ctx.Deadline()
 
 	var opts []ftp.DialOption
 	if ok {
 		opts = append(opts, ftp.DialWithTimeout(time.Until(d)))
 	}
-	c, err := ftp.Dial(addr, opts...)
+	c, err := ftp.Dial(addr.Host, opts...)
 	if err != nil {
 		res.Error = err.Error()
 		return
 	}
 
 	defer c.Quit()
-
-	if ok {
-		conn.SetDeadline(d)
-	}
 
 	err = c.Login("anonymous", "anonymous")
 	if err != nil {
@@ -60,6 +53,8 @@ func Ftp(ctx context.Context, target string) (res types.ScanFuncResult, err erro
 	for _, entry := range entries {
 		files = append(files, entry.Name)
 	}
+
+	res.Exploit = fmt.Sprintf("echo -e 'open %s %s\nuser anonymous anonymous\nls\nquit' | ftp -n", addr.Hostname(), addr.Port())
 	res.Result = strings.Join(files, "\n")
 	res.Success = true
 

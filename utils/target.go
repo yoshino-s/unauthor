@@ -6,19 +6,19 @@ import (
 	"strings"
 )
 
-func ExtractAddr(target string, defaultPort int) (addr string, err error) {
+func ExtractAddr(target string, defaultPort int) (*url.URL, error) {
 	var u *url.URL
+	var err error
 	if strings.Contains(target, "://") {
 		u, err = url.Parse(target)
 	} else {
 		u, err = url.Parse("tcp://" + target)
 	}
 	if err != nil {
-		return
+		return nil, err
 	}
 	if u.Port() == "" {
 		u.Host = u.Host + ":" + strconv.Itoa(defaultPort)
 	}
-	addr = u.Host
-	return
+	return u, nil
 }

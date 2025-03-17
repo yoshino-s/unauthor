@@ -3,6 +3,7 @@ package jdwp
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net"
 	"time"
 
@@ -15,9 +16,7 @@ var _ types.ScanFunc = Jdwp
 func Jdwp(ctx context.Context, target string) (res types.ScanFuncResult, err error) {
 	res.Success = false
 
-	var addr string
-
-	addr, err = utils.ExtractAddr(target, 8000)
+	addr, err := utils.ExtractAddr(target, 8000)
 
 	if err != nil {
 		res.Error = err.Error()
@@ -28,9 +27,9 @@ func Jdwp(ctx context.Context, target string) (res types.ScanFuncResult, err err
 	d, ok := ctx.Deadline()
 
 	if ok {
-		conn, err = net.DialTimeout("tcp", addr, time.Until(d))
+		conn, err = net.DialTimeout("tcp", addr.Host, time.Until(d))
 	} else {
-		conn, err = net.Dial("tcp", addr)
+		conn, err = net.Dial("tcp", addr.Host)
 	}
 
 	if err != nil {
@@ -65,6 +64,7 @@ func Jdwp(ctx context.Context, target string) (res types.ScanFuncResult, err err
 
 	res.Success = true
 
+	res.Exploit = fmt.Sprintf("go install github.com/yoshino-s/unauthor && unauthor -t %s -p jdwp", target)
 	res.Result = string(versionStr)
 
 	return

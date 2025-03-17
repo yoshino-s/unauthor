@@ -17,9 +17,7 @@ const payload = "envi"
 func Zookeeper(ctx context.Context, target string) (res types.ScanFuncResult, err error) {
 	res.Success = false
 
-	var addr string
-
-	addr, err = utils.ExtractAddr(target, 2181)
+	addr, err := utils.ExtractAddr(target, 2181)
 
 	if err != nil {
 		res.Error = err.Error()
@@ -30,9 +28,9 @@ func Zookeeper(ctx context.Context, target string) (res types.ScanFuncResult, er
 	d, ok := ctx.Deadline()
 
 	if ok {
-		conn, err = net.DialTimeout("tcp", addr, time.Until(d))
+		conn, err = net.DialTimeout("tcp", addr.Host, time.Until(d))
 	} else {
-		conn, err = net.Dial("tcp", addr)
+		conn, err = net.Dial("tcp", addr.Host)
 	}
 
 	if err != nil {
@@ -67,6 +65,7 @@ func Zookeeper(ctx context.Context, target string) (res types.ScanFuncResult, er
 
 	conn.Close()
 
+	res.Exploit = "echo envi | nc " + addr.Hostname() + " " + addr.Port()
 	res.Result = result
 
 	if strings.Contains(result, "Environment") {

@@ -3,6 +3,7 @@ package memcached
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"net"
 	"strings"
 	"time"
@@ -18,9 +19,7 @@ const payload = "stats\r\n"
 func Memcached(ctx context.Context, target string) (res types.ScanFuncResult, err error) {
 	res.Success = false
 
-	var addr string
-
-	addr, err = utils.ExtractAddr(target, 11211)
+	addr, err := utils.ExtractAddr(target, 11211)
 
 	if err != nil {
 		res.Error = err.Error()
@@ -31,9 +30,9 @@ func Memcached(ctx context.Context, target string) (res types.ScanFuncResult, er
 	d, ok := ctx.Deadline()
 
 	if ok {
-		conn, err = net.DialTimeout("tcp", addr, time.Until(d))
+		conn, err = net.DialTimeout("tcp", addr.Host, time.Until(d))
 	} else {
-		conn, err = net.Dial("tcp", addr)
+		conn, err = net.Dial("tcp", addr.Host)
 	}
 
 	if err != nil {
@@ -63,6 +62,7 @@ func Memcached(ctx context.Context, target string) (res types.ScanFuncResult, er
 		}
 	}
 
+	res.Exploit = fmt.Sprintf("echo -e 'stats\nquit' | nc %s %s", addr.Hostname(), addr.Port())
 	res.Result = result
 
 	if err = reader.Err(); err != nil {

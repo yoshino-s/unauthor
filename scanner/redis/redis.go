@@ -3,6 +3,7 @@ package redis
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"net"
 	"strconv"
 	"strings"
@@ -19,9 +20,7 @@ const payload = "*1\r\n$4\r\ninfo\r\n"
 func Redis(ctx context.Context, target string) (res types.ScanFuncResult, err error) {
 	res.Success = false
 
-	var addr string
-
-	addr, err = utils.ExtractAddr(target, 6379)
+	addr, err := utils.ExtractAddr(target, 6379)
 
 	if err != nil {
 		res.Error = err.Error()
@@ -32,9 +31,9 @@ func Redis(ctx context.Context, target string) (res types.ScanFuncResult, err er
 	d, ok := ctx.Deadline()
 
 	if ok {
-		conn, err = net.DialTimeout("tcp", addr, time.Until(d))
+		conn, err = net.DialTimeout("tcp", addr.Host, time.Until(d))
 	} else {
-		conn, err = net.Dial("tcp", addr)
+		conn, err = net.Dial("tcp", addr.Host)
 	}
 
 	if err != nil {
@@ -100,6 +99,7 @@ func Redis(ctx context.Context, target string) (res types.ScanFuncResult, err er
 
 	r := string(buf[:len])
 
+	res.Exploit = fmt.Sprintf("redis-cli -u redis://%s info", addr)
 	res.Result = r
 
 	if strings.Contains(r, "redis_version") {

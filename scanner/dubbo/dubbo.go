@@ -3,7 +3,9 @@ package dubbo
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"net"
+	"strconv"
 	"strings"
 	"time"
 
@@ -18,9 +20,7 @@ const payload = "ls\n\n"
 func Dubbo(ctx context.Context, target string) (res types.ScanFuncResult, err error) {
 	res.Success = false
 
-	var addr string
-
-	addr, err = utils.ExtractAddr(target, 20880)
+	addr, err := utils.ExtractAddr(target, 20880)
 
 	if err != nil {
 		res.Error = err.Error()
@@ -31,9 +31,9 @@ func Dubbo(ctx context.Context, target string) (res types.ScanFuncResult, err er
 	d, ok := ctx.Deadline()
 
 	if ok {
-		conn, err = net.DialTimeout("tcp", addr, time.Until(d))
+		conn, err = net.DialTimeout("tcp", addr.Host, time.Until(d))
 	} else {
-		conn, err = net.Dial("tcp", addr)
+		conn, err = net.Dial("tcp", addr.Host)
 	}
 
 	if err != nil {
@@ -60,6 +60,7 @@ func Dubbo(ctx context.Context, target string) (res types.ScanFuncResult, err er
 		return
 	}
 
+	res.Exploit = fmt.Sprintf("echo -e %s | nc %s %s", strconv.Quote(payload), addr.Hostname(), addr.Port())
 	res.Result = result
 
 	if err = conn.Close(); err != nil {
