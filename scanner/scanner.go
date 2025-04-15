@@ -45,7 +45,7 @@ type Scanner struct {
 
 func New() *Scanner {
 	s := &Scanner{
-		EmptyApplication: application.NewEmptyApplication(),
+		EmptyApplication: application.NewEmptyApplication("scanner"),
 		config: ScannerConfig{
 			ScanFuncs: make(map[string]types.ScanFunc),
 		},
