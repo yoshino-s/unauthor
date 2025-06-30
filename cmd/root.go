@@ -11,7 +11,7 @@ import (
 	"github.com/yoshino-s/unauthor/scanner"
 )
 
-var name = "soar-helper"
+var name = "unauthor"
 var app = application.NewMainApplication()
 
 var (
